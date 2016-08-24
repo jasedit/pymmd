@@ -111,3 +111,8 @@ def convert_from(fname, ext=COMPLETE, fmt=HTML):
   dname = os.path.dirname(fname)
 
   return convert(source, ext, fmt, dname)
+
+def version():
+  """Returns a string containing the MultiMarkdown library version in use."""
+  MMDLibrary.mmd_version.restype = ctypes.c_char_p
+  return MMDLibrary.mmd_version()
