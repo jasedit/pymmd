@@ -51,6 +51,13 @@ class GString(ctypes.Structure):
               ("currentStringLength", ctypes.c_ulong)]
 
 def _expand_source(source, dname, fmt):
+  """Expands source text to include headers, footers, and expands Multimarkdown transclusion directives.
+
+  Keyword arguments:
+  source -- string containing the Multimarkdown text to expand
+  dname -- directory name to use as the base directory for transclusion references
+  fmt -- format flag indicating which format to use to convert transclusion statements
+  """
   MMDLibrary.g_string_new.restype = ctypes.POINTER(GString)
   MMDLibrary.g_string_new.argtypes = [ctypes.c_char_p]
   src = source.encode('utf-8')
@@ -69,12 +76,22 @@ def _expand_source(source, dname, fmt):
   return full_txt.decode('ascii')
 
 def has_metadata(source, ext):
+  """Returns a flag indicating if a given block of MultiMarkdown text contains metadata."""
   fn = MMDLibrary.has_metadata
   fn.restype = ctypes.c_bool
   return fn(source, ext)
 
 def convert(source, ext=COMPLETE, fmt=HTML, dname=None):
-  if dname and os.path.exists(dname):
+  """Converts a string of MultiMarkdown text to the requested format.
+  Transclusion is performed if the COMPATIBILITY extension is not set, and dname is set to a valid directory
+
+  Keyword arguments:
+  source -- string containing MultiMarkdown text
+  ext -- extension bitfield to pass to conversion process
+  fmt -- flag indicating output format to use
+  dname -- directory to use for transclusion - if None, transclusion functionality is bypassed
+  """
+  if dname and os.path.exists(dname) and not (ext & COMPATIBILITY):
     source = _expand_source(source, dname, fmt)
   MMDLibrary.markdown_to_string.argtypes = [ctypes.c_char_p, ctypes.c_ulong, ctypes.c_int]
   MMDLibrary.markdown_to_string.restype = ctypes.c_char_p
@@ -82,6 +99,14 @@ def convert(source, ext=COMPLETE, fmt=HTML, dname=None):
   return MMDLibrary.markdown_to_string(src, ext, fmt).decode('ascii')
 
 def convert_from(fname, ext=COMPLETE, fmt=HTML):
+  """Converts a file containing MultiMarkdown text to the requested format.
+  Transclusion is performed if the COMPATIBILITY extension is not set.
+
+  Keyword arguments:
+  fname -- string containing MultiMarkdown text
+  ext -- extension bitfield to pass to conversion process
+  fmt -- flag indicating output format to use
+  """
   source = open(fname, 'r').read()
   dname = os.path.dirname(fname)
 
