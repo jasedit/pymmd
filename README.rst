@@ -8,7 +8,7 @@ The `ctypes <https://docs.python.org/2/library/ctypes.html>` package is used to 
 Installation
 =============
 
-This package requires the
+This package requires MultiMarkdown installed as a shared library in order to function. Currently, this can be installed by installing MultiMarkdown from `this <https://github.com/jasedit/MultiMarkdown-5/tree/make_shared>` fork, and following the installation instructions.
 
 Examples
 =============
