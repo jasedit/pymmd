@@ -1,14 +1,14 @@
 pymmd
 ============
 
-Python wrapper for `MultiMarkdown <https://github.com/fletcher/MultiMarkdown-5>`, which converts MultiMarkdown flavored text into one of several outputs formats. This package directly wraps the reference implementation, and provides a simple interface to the library.
+Python wrapper for `MultiMarkdown <https://github.com/fletcher/MultiMarkdown-5>`_, which converts MultiMarkdown flavored text into one of several outputs formats. This package directly wraps the reference implementation, and provides a simple interface to the library.
 
-The `ctypes <https://docs.python.org/2/library/ctypes.html>` package is used to wrap libMultiMarkdown in a portable fashion.
+The `ctypes <https://docs.python.org/2/library/ctypes.html>`_ package is used to wrap libMultiMarkdown in a portable fashion.
 
 Installation
 =============
 
-This package requires MultiMarkdown installed as a shared library in order to function. Currently, this can be installed by installing MultiMarkdown from `this <https://github.com/jasedit/MultiMarkdown-5/tree/make_shared>` fork, and following the installation instructions.
+This package requires MultiMarkdown installed as a shared library in order to function. Currently, this can be installed by installing MultiMarkdown from `this <https://github.com/jasedit/MultiMarkdown-5/tree/make_shared>`_ fork, and following the installation instructions.
 
 Examples
 =============
@@ -26,7 +26,7 @@ Converting a string of MultiMarkdown directly to various outputs:
   #Generate a snippet
   html_snippet = pymmd.convert(data, ext=pymmd.SNIPPET)
 
-Files can also be converted directly, which enables the `Transclusion <http://fletcher.github.io/MultiMarkdown-5/transclusion>` capabilities of MultiMarkdown.
+Files can also be converted directly, which enables the `Transclusion <http://fletcher.github.io/MultiMarkdown-5/transclusion>`_ capabilities of MultiMarkdown.
 
 .. code:: python
 
