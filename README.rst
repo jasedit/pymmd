@@ -8,7 +8,19 @@ The `ctypes <https://docs.python.org/2/library/ctypes.html>`_ package is used to
 Installation
 =============
 
-This package requires MultiMarkdown installed as a shared library in order to function. Currently, this can be installed by installing MultiMarkdown from `this <https://github.com/jasedit/MultiMarkdown-5/tree/make_shared>`_ fork, and following the installation instructions.
+This package requires MultiMarkdown installed as a shared library in order to function. Currently, this can be installed by installing MultiMarkdown from `this <https://github.com/fletcher/MultiMarkdown-5/tree/develop>`_ branch, and installing the package with the shared option enabled. This installs the shared library version of libMultiMarkdown which can be called by this wrapper.
+
+Once the shared library is installed, this package can be installed via pypi:
+
+.. code:: bash
+
+  pip install pymmd
+
+Verifying the package is working as intended can be accomplished via a simple test command, which should print out the MultiMarkdown version in use:
+
+.. code:: bash
+
+  python -c "import pymmd; print(pymmd.version())"
 
 Examples
 =============
