@@ -4,7 +4,6 @@ from os import path
 from distutils.core import setup
 from setuptools import find_packages
 
-
 here = path.abspath(path.dirname(__file__))
 
 with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
@@ -20,7 +19,7 @@ setup(
     author_email='jasedit@gmail.com',
     url="https://github.com/jasedit/pymmd",
     classifiers=[
-        'Development Status :: 3',
+        'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
         'Topic :: Text Processing :: Markup',
         'Topic :: Text Processing :: Filters',
