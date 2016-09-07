@@ -5,9 +5,9 @@ import os.path
 import ctypes
 import ctypes.util
 
-MMDLibraryLocation = ctypes.util.find_library('MultiMarkdown')
+_LIB_LOCATION = ctypes.util.find_library('MultiMarkdown')
 
-MMDLibrary = ctypes.cdll.LoadLibrary(MMDLibraryLocation)
+_MMD_LIB = ctypes.cdll.LoadLibrary(_LIB_LOCATION)
 
 # Extension options
 COMPATIBILITY = 0
@@ -58,26 +58,26 @@ def _expand_source(source, dname, fmt):
   dname -- directory name to use as the base directory for transclusion references
   fmt -- format flag indicating which format to use to convert transclusion statements
   """
-  MMDLibrary.g_string_new.restype = ctypes.POINTER(GString)
-  MMDLibrary.g_string_new.argtypes = [ctypes.c_char_p]
+  _MMD_LIB.g_string_new.restype = ctypes.POINTER(GString)
+  _MMD_LIB.g_string_new.argtypes = [ctypes.c_char_p]
   src = source.encode('utf-8')
-  gstr = MMDLibrary.g_string_new(src)
+  gstr = _MMD_LIB.g_string_new(src)
 
-  MMDLibrary.prepend_mmd_header(gstr)
-  MMDLibrary.append_mmd_footer(gstr)
+  _MMD_LIB.prepend_mmd_header(gstr)
+  _MMD_LIB.append_mmd_footer(gstr)
 
-  manifest = MMDLibrary.g_string_new(b"")
-  MMDLibrary.transclude_source.argtypes = [ctypes.POINTER(GString), ctypes.c_char_p, ctypes.c_char_p, ctypes.c_int, ctypes.POINTER(GString)]
-  MMDLibrary.transclude_source(gstr, dname.encode('utf-8'), None, fmt, manifest)
-  MMDLibrary.g_string_free(manifest, True)
+  manifest = _MMD_LIB.g_string_new(b"")
+  _MMD_LIB.transclude_source.argtypes = [ctypes.POINTER(GString), ctypes.c_char_p, ctypes.c_char_p, ctypes.c_int, ctypes.POINTER(GString)]
+  _MMD_LIB.transclude_source(gstr, dname.encode('utf-8'), None, fmt, manifest)
+  _MMD_LIB.g_string_free(manifest, True)
   full_txt = gstr.contents.str
-  MMDLibrary.g_string_free(gstr, True)
+  _MMD_LIB.g_string_free(gstr, True)
 
   return full_txt.decode('ascii')
 
 def has_metadata(source, ext):
   """Returns a flag indicating if a given block of MultiMarkdown text contains metadata."""
-  fn = MMDLibrary.has_metadata
+  fn = _MMD_LIB.has_metadata
   fn.restype = ctypes.c_bool
   return fn(source, ext)
 
@@ -93,10 +93,10 @@ def convert(source, ext=COMPLETE, fmt=HTML, dname=None):
   """
   if dname and os.path.exists(dname) and not (ext & COMPATIBILITY):
     source = _expand_source(source, dname, fmt)
-  MMDLibrary.markdown_to_string.argtypes = [ctypes.c_char_p, ctypes.c_ulong, ctypes.c_int]
-  MMDLibrary.markdown_to_string.restype = ctypes.c_char_p
+  _MMD_LIB.markdown_to_string.argtypes = [ctypes.c_char_p, ctypes.c_ulong, ctypes.c_int]
+  _MMD_LIB.markdown_to_string.restype = ctypes.c_char_p
   src = source.encode('utf-8')
-  return MMDLibrary.markdown_to_string(src, ext, fmt).decode('ascii')
+  return _MMD_LIB.markdown_to_string(src, ext, fmt).decode('ascii')
 
 def convert_from(fname, ext=COMPLETE, fmt=HTML):
   """Converts a file containing MultiMarkdown text to the requested format.
@@ -119,10 +119,10 @@ def extract_metadata_keys(source, ext=COMPLETE):
   source -- string containing MultiMarkdown text
   ext -- extension bitfield for extracting MultiMarkdown
   """
-  MMDLibrary.extract_metadata_keys.restype = ctypes.c_char_p
-  MMDLibrary.extract_metadata_keys.argtypes = [ctypes.c_char_p, ctypes.c_ulong]
+  _MMD_LIB.extract_metadata_keys.restype = ctypes.c_char_p
+  _MMD_LIB.extract_metadata_keys.argtypes = [ctypes.c_char_p, ctypes.c_ulong]
   src = source.encode('utf-8')
-  return MMDLibrary.extract_metadata_keys(src, ext).decode('ascii')
+  return _MMD_LIB.extract_metadata_keys(src, ext).decode('ascii')
 
 def extract_metadata_value(source, ext, key):
   """ Extracts value for the specified metadata key from the given extension set.
@@ -132,15 +132,15 @@ def extract_metadata_value(source, ext, key):
   ext -- extension bitfield for processing text
   key -- key to extract
   """
-  MMDLibrary.extract_metadata_value.restype = ctypes.c_char_p
-  MMDLibrary.extract_metadata_value.argtypes = [ctypes.c_char_p, ctypes.c_ulong, ctypes.c_char_p]
+  _MMD_LIB.extract_metadata_value.restype = ctypes.c_char_p
+  _MMD_LIB.extract_metadata_value.argtypes = [ctypes.c_char_p, ctypes.c_ulong, ctypes.c_char_p]
 
   src = source.decode('utf-8')
   dkey = key.decode('utf-8')
 
-  return MMDLibrary.extract_metadata_value(src, ext, dkey).decode('ascii')
+  return _MMD_LIB.extract_metadata_value(src, ext, dkey).decode('ascii')
 
 def version():
   """Returns a string containing the MultiMarkdown library version in use."""
-  MMDLibrary.mmd_version.restype = ctypes.c_char_p
-  return MMDLibrary.mmd_version()
+  _MMD_LIB.mmd_version.restype = ctypes.c_char_p
+  return _MMD_LIB.mmd_version()
