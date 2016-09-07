@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+"""Interface to the MultiMarkdown parser."""
 
 import os.path
 
