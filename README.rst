@@ -1,3 +1,16 @@
+.. image:: https://img.shields.io/pypi/v/pymmd.svg
+    :target: https://pypi.python.org/pypi/pymmd/
+    :alt: Latest Version
+.. image:: https://img.shields.io/pypi/dm/pymmd.svg
+    :target: https://pypi.python.org/pypi/pymmd/
+    :alt: Downloads
+.. image:: https://img.shields.io/pypi/l/pymmd.svg
+    :target: https://pypi.python.org/pypi/pymmd/
+    :alt: License
+.. image:: https://landscape.io/github/jasedit/pymmd/master/landscape.svg?style=flat
+    :target: https://landscape.io/github/jasedit/pymmd/master/
+    :alt: Code Health
+
 pymmd
 ============
 
