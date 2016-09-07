@@ -47,6 +47,7 @@ LYX = 12
 TOC = 13
 
 class GString(ctypes.Structure):
+    """Class mirroring GString buffer interface struct in MultiMarkdown."""
     _fields_ = [("str", ctypes.c_char_p),
                 ("currentStringBufferSize", ctypes.c_ulong),
                 ("currentStringLength", ctypes.c_ulong)]
