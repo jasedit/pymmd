@@ -2,8 +2,10 @@
 from codecs import open
 from os import path
 from distutils.core import setup
-from setuptools import find_packages, Command
+from distutils.util import get_platform
+from setuptools import find_packages, Command, Distribution
 from pymmd import build_mmd
+import sys
 
 here = path.abspath(path.dirname(__file__))
 
@@ -17,6 +19,17 @@ class BuildMMDCommand(Command):
         pass
     def run(self):
         build_mmd(path.join(here, 'pymmd', 'files'))
+
+class BinaryDistribution(Distribution):
+    def is_pure(self):
+        return False
+
+is_build_wheel = ("bdist_wheel" in sys.argv)
+
+if is_build_wheel:
+    build_mmd(path.join(here, 'pymmd', 'files'))
+    sys.argv.append('--plat-name')
+    sys.argv.append(get_platform())
 
 with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
     long_description = f.read()
@@ -42,5 +55,6 @@ setup(
     ],
     packages=find_packages(),
     package_data={'pymmd': ['files/*']},
-    cmdclass={'download_mmd': BuildMMDCommand}
+    cmdclass={'download_mmd': BuildMMDCommand},
+    distclass=BinaryDistribution
     )
