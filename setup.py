@@ -2,9 +2,21 @@
 from codecs import open
 from os import path
 from distutils.core import setup
-from setuptools import find_packages
+from setuptools import find_packages, Command
+from pymmd import build_mmd
 
 here = path.abspath(path.dirname(__file__))
+
+class BuildMMDCommand(Command):
+    """Build MMD to include in package."""
+    description = "Downloads and builds MultiMarkdown shared library and adds it to the distribution"
+    user_options = []
+    def initialize_options(self):
+        pass
+    def finalize_options(self):
+        pass
+    def run(self):
+        build_mmd(path.join(here, 'pymmd', 'files'))
 
 with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
     long_description = f.read()
@@ -28,5 +40,7 @@ setup(
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 3'
     ],
-    packages=find_packages()
+    packages=find_packages(),
+    package_data={'pymmd': ['files/*']},
+    cmdclass={'download_mmd': BuildMMDCommand}
     )
