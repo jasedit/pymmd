@@ -24,10 +24,10 @@ SHLIB_EXT = {
 }
 
 def build_posix():
-  return subprocess.call(['make'])
+  return subprocess.call(['make', 'libMultiMarkdownShared'])
 
 def build_ms():
-  return subprocess.call(['msbuild', 'ALL_BUILD.vcxproj', '/p:Configuration=Release'])
+  return subprocess.call(['msbuild', 'libMultiMarkdownShared.vcxproj', '/p:Configuration=Release'])
 
 PLATFORM_BUILDS = {
   'Linux': build_posix,
