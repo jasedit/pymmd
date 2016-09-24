@@ -38,7 +38,7 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 
 setup(
     name='pymmd',
-    version='0.0.1',
+    version='0.1.0',
     description='Python wrapper for the MultiMarkdown library.',
     long_description=long_description,
     license='MIT',
