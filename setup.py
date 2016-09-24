@@ -6,6 +6,7 @@ from distutils.util import get_platform
 from setuptools import find_packages, Command, Distribution
 from pymmd import build_mmd
 import sys
+import glob
 
 here = path.abspath(path.dirname(__file__))
 
@@ -27,7 +28,8 @@ class BinaryDistribution(Distribution):
 is_build_wheel = ("bdist_wheel" in sys.argv)
 
 if is_build_wheel:
-    build_mmd(path.join(here, 'pymmd', 'files'))
+    if not glob.glob(path.join('pymmd', 'files', 'libMultiMarkdown*')):
+        build_mmd(path.join(here, 'pymmd', 'files'))
     sys.argv.append('--plat-name')
     sys.argv.append(get_platform())
 
