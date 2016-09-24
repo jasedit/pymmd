@@ -101,7 +101,7 @@ def convert(source, ext=COMPLETE, fmt=HTML, dname=None):
     _MMD_LIB.markdown_to_string.argtypes = [ctypes.c_char_p, ctypes.c_ulong, ctypes.c_int]
     _MMD_LIB.markdown_to_string.restype = ctypes.c_char_p
     src = source.encode('utf-8')
-    return _MMD_LIB.markdown_to_string(src, ext, fmt).decode('ascii')
+    return _MMD_LIB.markdown_to_string(src, ext, fmt).decode('utf-8')
 
 def convert_from(fname, ext=COMPLETE, fmt=HTML):
     """Converts a file containing MultiMarkdown text to the requested format.
@@ -127,7 +127,7 @@ def extract_metadata_keys(source, ext=COMPLETE):
     _MMD_LIB.extract_metadata_keys.restype = ctypes.c_char_p
     _MMD_LIB.extract_metadata_keys.argtypes = [ctypes.c_char_p, ctypes.c_ulong]
     src = source.encode('utf-8')
-    return _MMD_LIB.extract_metadata_keys(src, ext).decode('ascii')
+    return _MMD_LIB.extract_metadata_keys(src, ext).decode('utf-8')
 
 def extract_metadata_value(source, ext, key):
     """ Extracts value for the specified metadata key from the given extension set.
@@ -143,7 +143,7 @@ def extract_metadata_value(source, ext, key):
     src = source.decode('utf-8')
     dkey = key.decode('utf-8')
 
-    return _MMD_LIB.extract_metadata_value(src, ext, dkey).decode('ascii')
+    return _MMD_LIB.extract_metadata_value(src, ext, dkey).decode('utf-8')
 
 def version():
     """Returns a string containing the MultiMarkdown library version in use."""
