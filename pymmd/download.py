@@ -35,14 +35,20 @@ PLATFORM_BUILDS = {
   'Windows': build_ms
 }
 
+def link_modules():
+  subprocess.call(['git', 'submodule', 'init'])
+  subprocess.call(['git', 'submodule', 'update'])
+  subprocess.call(['git', 'submodule', 'foreach', 'git branch --set-upstream master origin/master'])
+  subprocess.call(['git', 'submodule', 'foreach', 'git checkout master'])
+  subprocess.call(['git', 'submodule', 'foreach', 'git pull origin'])
+
 def build_mmd(target_folder):
     mmd_dir = tempfile.mkdtemp()
     subprocess.call(['git', 'clone', 'https://github.com/jasedit/MultiMarkdown-5', '-b', 'fix_windows', mmd_dir])
     build_dir = os.path.join(mmd_dir, 'build')
     old_pwd = os.getcwd()
     os.chdir(mmd_dir)
-    subprocess.call('./link_git_modules')
-    subprocess.call('./update_git_modules')
+    link_modules()
     os.chdir(build_dir)
 
     subprocess.call(['cmake', '-DCMAKE_BUILD_TYPE=Release', '-DSHAREDBUILD=1', '..'])
