@@ -6,9 +6,12 @@ import os.path
 import ctypes
 import ctypes.util
 
-_LIB_LOCATION = ctypes.util.find_library('MultiMarkdown')
+try:
+    _LIB_LOCATION = ctypes.util.find_library('MultiMarkdown')
 
-_MMD_LIB = ctypes.cdll.LoadLibrary(_LIB_LOCATION)
+    _MMD_LIB = ctypes.cdll.LoadLibrary(_LIB_LOCATION)
+except TypeError:
+    _MMD_LIB = None
 
 # Extension options
 COMPATIBILITY = 0
