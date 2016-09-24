@@ -22,12 +22,11 @@ class BuildMMDCommand(Command):
         build_mmd(path.join(here, 'pymmd', 'files'))
 
 class BinaryDistribution(Distribution):
+    """Forcing distribution to not be considered pure"""
     def is_pure(self):
         return False
 
-is_build_wheel = ("bdist_wheel" in sys.argv)
-
-if is_build_wheel:
+if "bdist_wheel" in sys.argv:
     if not glob.glob(path.join('pymmd', 'files', 'libMultiMarkdown*')):
         build_mmd(path.join(here, 'pymmd', 'files'))
     sys.argv.append('--plat-name')
@@ -38,7 +37,7 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 
 setup(
     name='pymmd',
-    version='0.1.1',
+    version='0.1.2',
     description='Python wrapper for the MultiMarkdown library.',
     long_description=long_description,
     license='MIT',
