@@ -85,7 +85,7 @@ def _expand_source(source, dname, fmt):
     full_txt = gstr.contents.str
     _MMD_LIB.g_string_free(gstr, True)
 
-    return full_txt.decode('ascii')
+    return full_txt.decode('utf-8')
 
 def has_metadata(source, ext):
     """Returns a flag indicating if a given block of MultiMarkdown text contains metadata."""
@@ -156,4 +156,4 @@ def extract_metadata_value(source, ext, key):
 def version():
     """Returns a string containing the MultiMarkdown library version in use."""
     _MMD_LIB.mmd_version.restype = ctypes.c_char_p
-    return _MMD_LIB.mmd_version()
+    return _MMD_LIB.mmd_version().decode('utf-8')
