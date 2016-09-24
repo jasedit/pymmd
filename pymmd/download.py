@@ -59,4 +59,7 @@ def build_mmd(target_folder):
       os.mkdir(target_folder)
     shutil.copyfile(os.path.join(build_dir, SHLIB_PREFIX[platform.system()], lib_file), os.path.join(target_folder, lib_file))
     os.chdir(old_pwd)
-    shutil.rmtree(mmd_dir)
+    try:
+      shutil.rmtree(mmd_dir)
+    except:
+      pass
