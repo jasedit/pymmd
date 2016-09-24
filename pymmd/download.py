@@ -24,10 +24,10 @@ SHLIB_EXT = {
 }
 
 def build_posix():
-  return subprocess.call(['make'])
+  return subprocess.call(['make', 'libMultiMarkdownShared'])
 
 def build_ms():
-  return subprocess.call(['msbuild', 'ALL_BUILD.vcxproj', '/p:Configuration=Release'])
+  return subprocess.call(['msbuild', 'libMultiMarkdownShared.vcxproj', '/p:Configuration=Release'])
 
 PLATFORM_BUILDS = {
   'Linux': build_posix,
@@ -51,7 +51,13 @@ def build_mmd(target_folder):
     link_modules()
     os.chdir(build_dir)
 
-    subprocess.call(['cmake', '-DCMAKE_BUILD_TYPE=Release', '-DSHAREDBUILD=1', '..'])
+    cmake_cmd = ['cmake', '-DCMAKE_BUILD_TYPE=Release', '-DSHAREDBUILD=1', '..']
+    if platform.system() == 'Windows':
+      is_64bit = platform.architecture()[0] == '64bit'
+      generator = 'Visual Studio 14 2015{0}'.format(' Win64' if is_64bit else '')
+      cmake_cmd.insert(-1, '-G')
+      cmake_cmd.insert(-1, '{0}'.format(generator))
+    subprocess.call(cmake_cmd)
     PLATFORM_BUILDS[platform.system()]()
 
     lib_file = 'libMultiMarkdown' + SHLIB_EXT[platform.system()]
