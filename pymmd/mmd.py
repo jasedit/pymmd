@@ -129,8 +129,7 @@ def convert_from(fname, ext=COMPLETE, fmt=HTML, oname=None):
     oname -- optional filename to write MMD output to disk
     """
     source = open(fname, 'r').read()
-    dname = os.path.dirname(fname)
-    dname = dname if dname else '.'
+    dname = os.path.dirname(fname) or '.'
 
     mmd = convert(source, ext, fmt, dname)
 
