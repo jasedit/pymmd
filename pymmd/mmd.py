@@ -7,16 +7,26 @@ import ctypes
 import ctypes.util
 
 from .download import SHLIB_EXT
-try:
-    _LIB_FILE = 'libMultiMarkdown' + SHLIB_EXT[platform.system()]
-    _LIB_LOCATION = os.path.abspath(os.path.join(os.path.dirname(__file__), 'files', _LIB_FILE))
 
-    if not os.path.exists(_LIB_LOCATION):
-        _LIB_LOCATION = ctypes.util.find_library('MultiMarkdown')
+_MMD_LIB = None
+_LIB_LOCATION = None
 
-    _MMD_LIB = ctypes.cdll.LoadLibrary(_LIB_LOCATION)
-except TypeError:
-    _MMD_LIB = None
+def load_mmd():
+    """Loads libMultiMarkdown for usage"""
+    global _MMD_LIB
+    global _LIB_LOCATION
+    try:
+        lib_file = 'libMultiMarkdown' + SHLIB_EXT[platform.system()]
+        _LIB_LOCATION = os.path.abspath(os.path.join(os.path.dirname(__file__), 'files', lib_file))
+
+        if not os.path.isfile(_LIB_LOCATION):
+            _LIB_LOCATION = ctypes.util.find_library('MultiMarkdown')
+
+        _MMD_LIB = ctypes.cdll.LoadLibrary(_LIB_LOCATION)
+    except:
+        _MMD_LIB = None
+
+load_mmd()
 
 # Extension options
 COMPATIBILITY = 0
@@ -77,21 +87,23 @@ def _expand_source(source, dname, fmt):
     _MMD_LIB.prepend_mmd_header(gstr)
     _MMD_LIB.append_mmd_footer(gstr)
 
-    manifest = _MMD_LIB.g_string_new(b"")
+    manif = _MMD_LIB.g_string_new(b"")
     _MMD_LIB.transclude_source.argtypes = [ctypes.POINTER(GString), ctypes.c_char_p,
                                            ctypes.c_char_p, ctypes.c_int, ctypes.POINTER(GString)]
-    _MMD_LIB.transclude_source(gstr, dname.encode('utf-8'), None, fmt, manifest)
-    _MMD_LIB.g_string_free(manifest, True)
+    _MMD_LIB.transclude_source(gstr, dname.encode('utf-8'), None, fmt, manif)
+    manifest_txt = manif.contents.str
     full_txt = gstr.contents.str
+    _MMD_LIB.g_string_free(manif, True)
     _MMD_LIB.g_string_free(gstr, True)
 
-    return full_txt.decode('utf-8')
+    manifest_txt = [ii for ii in manifest_txt.decode('utf-8').split('\n') if ii]
+    return full_txt.decode('utf-8'), manifest_txt
 
 def has_metadata(source, ext):
     """Returns a flag indicating if a given block of MultiMarkdown text contains metadata."""
-    fn = _MMD_LIB.has_metadata
-    fn.restype = ctypes.c_bool
-    return fn(source, ext)
+    _MMD_LIB.has_metadata.argtypes = [ctypes.c_char_p, ctypes.c_int]
+    _MMD_LIB.has_metadata.restype = ctypes.c_bool
+    return _MMD_LIB.has_metadata(source.encode('utf-8'), ext)
 
 def convert(source, ext=COMPLETE, fmt=HTML, dname=None):
     """Converts a string of MultiMarkdown text to the requested format.
@@ -102,30 +114,23 @@ def convert(source, ext=COMPLETE, fmt=HTML, dname=None):
     source -- string containing MultiMarkdown text
     ext -- extension bitfield to pass to conversion process
     fmt -- flag indicating output format to use
-    dname -- directory to use for transclusion - if None, transclusion functionality is bypassed
+    dname -- Path to use for transclusion - if None, transclusion functionality is bypassed
     """
-    if dname and os.path.exists(dname) and not (ext & COMPATIBILITY):
-        source = _expand_source(source, dname, fmt)
+    if dname and not ext & COMPATIBILITY:
+        if os.path.isfile(dname):
+            dname = os.path.abspath(os.path.dirname(dname))
+        source, _ = _expand_source(source, dname, fmt)
     _MMD_LIB.markdown_to_string.argtypes = [ctypes.c_char_p, ctypes.c_ulong, ctypes.c_int]
     _MMD_LIB.markdown_to_string.restype = ctypes.c_char_p
     src = source.encode('utf-8')
     return _MMD_LIB.markdown_to_string(src, ext, fmt).decode('utf-8')
 
-def convert_from(fname, ext=COMPLETE, fmt=HTML):
-    """Converts a file containing MultiMarkdown text to the requested format.
-    Transclusion is performed if the COMPATIBILITY extension is not set.
+def manifest(txt, dname):
+    """Extracts file manifest for a body of text with the given directory."""
+    _, files = _expand_source(txt, dname, HTML)
+    return files
 
-    Keyword arguments:
-    fname -- string containing MultiMarkdown text
-    ext -- extension bitfield to pass to conversion process
-    fmt -- flag indicating output format to use
-    """
-    source = open(fname, 'r').read()
-    dname = os.path.dirname(fname)
-
-    return convert(source, ext, fmt, dname)
-
-def extract_metadata_keys(source, ext=COMPLETE):
+def keys(source, ext=COMPLETE):
     """Extracts metadata keys from the provided MultiMarkdown text.
 
     Keyword arguments:
@@ -135,10 +140,13 @@ def extract_metadata_keys(source, ext=COMPLETE):
     _MMD_LIB.extract_metadata_keys.restype = ctypes.c_char_p
     _MMD_LIB.extract_metadata_keys.argtypes = [ctypes.c_char_p, ctypes.c_ulong]
     src = source.encode('utf-8')
-    return _MMD_LIB.extract_metadata_keys(src, ext).decode('utf-8')
+    all_keys = _MMD_LIB.extract_metadata_keys(src, ext)
+    all_keys = all_keys.decode('utf-8') if all_keys else ''
+    key_list = [ii for ii in all_keys.split('\n') if ii]
+    return key_list
 
-def extract_metadata_value(source, ext, key):
-    """ Extracts value for the specified metadata key from the given extension set.
+def value(source, key, ext=COMPLETE):
+    """Extracts value for the specified metadata key from the given extension set.
 
     Keyword arguments:
     source -- string containing MultiMarkdown text
@@ -148,12 +156,17 @@ def extract_metadata_value(source, ext, key):
     _MMD_LIB.extract_metadata_value.restype = ctypes.c_char_p
     _MMD_LIB.extract_metadata_value.argtypes = [ctypes.c_char_p, ctypes.c_ulong, ctypes.c_char_p]
 
-    src = source.decode('utf-8')
-    dkey = key.decode('utf-8')
+    src = source.encode('utf-8')
+    dkey = key.encode('utf-8')
 
-    return _MMD_LIB.extract_metadata_value(src, ext, dkey).decode('utf-8')
+    value = _MMD_LIB.extract_metadata_value(src, ext, dkey)
+    return value.decode('utf-8') if value else ''
 
 def version():
     """Returns a string containing the MultiMarkdown library version in use."""
     _MMD_LIB.mmd_version.restype = ctypes.c_char_p
     return _MMD_LIB.mmd_version().decode('utf-8')
+
+def valid_mmd():
+    """Return flag indicating if the library was correctly loaded."""
+    return bool(_MMD_LIB)

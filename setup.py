@@ -26,9 +26,7 @@ class BinaryDistribution(Distribution):
     def is_pure(self):
         return False
 
-if "bdist_wheel" in sys.argv:
-    if not glob.glob(path.join('pymmd', 'files', 'libMultiMarkdown*')):
-        build_mmd(path.join(here, 'pymmd', 'files'))
+if "download_mmd" in sys.argv and "bdist_wheel" in sys.argv:
     sys.argv.append('--plat-name')
     sys.argv.append(get_platform())
 
@@ -37,7 +35,7 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 
 setup(
     name='pymmd',
-    version='0.1.2',
+    version='0.2.0',
     description='Python wrapper for the MultiMarkdown library.',
     long_description=long_description,
     license='MIT',
