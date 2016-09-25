@@ -95,9 +95,10 @@ def _expand_source(source, dname, fmt):
 
 def has_metadata(source, ext):
     """Returns a flag indicating if a given block of MultiMarkdown text contains metadata."""
-    fn = _MMD_LIB.has_metadata
-    fn.restype = ctypes.c_bool
-    return fn(source, ext)
+    _MMD_LIB.has_metadata.argtypes = [ctypes.c_char_p, ctypes.c_int]
+    _MMD_LIB.has_metadata.restype = ctypes.c_bool
+    return _MMD_LIB.has_metadata(source.encode('utf-8'), ext)
+
 
 def convert(source, ext=COMPLETE, fmt=HTML, dname=None):
     """Converts a string of MultiMarkdown text to the requested format.
