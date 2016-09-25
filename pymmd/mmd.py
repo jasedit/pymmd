@@ -138,6 +138,12 @@ def convert_from(fname, ext=COMPLETE, fmt=HTML, oname=None):
             ofp.write(mmd)
     return mmd
 
+def manifest(fname):
+    """Extracts the file manifest for a given document."""
+    source = open(fname, 'r').read()
+    dname = os.path.dirname(fname) or '.'
+    _, files = _expand_source(source, dname, HTML)
+    return files
 
 def extract_metadata_keys(source, ext=COMPLETE):
     """Extracts metadata keys from the provided MultiMarkdown text.
