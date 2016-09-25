@@ -159,7 +159,7 @@ def extract_metadata_keys(source, ext=COMPLETE):
     keys = [ii for ii in keys.split('\n') if ii]
     return keys
 
-def extract_metadata_value(source, ext, key):
+def extract_metadata_value(source, key, ext=COMPLETE):
     """ Extracts value for the specified metadata key from the given extension set.
 
     Keyword arguments:
@@ -170,8 +170,8 @@ def extract_metadata_value(source, ext, key):
     _MMD_LIB.extract_metadata_value.restype = ctypes.c_char_p
     _MMD_LIB.extract_metadata_value.argtypes = [ctypes.c_char_p, ctypes.c_ulong, ctypes.c_char_p]
 
-    src = source.decode('utf-8')
-    dkey = key.decode('utf-8')
+    src = source.encode('utf-8')
+    dkey = key.encode('utf-8')
 
     return _MMD_LIB.extract_metadata_value(src, ext, dkey).decode('utf-8')
 
