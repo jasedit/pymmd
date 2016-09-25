@@ -25,7 +25,8 @@ def build_posix():
 
 def build_ms():
     """Invoke build command on Windows."""
-    return subprocess.call(['msbuild', 'libMultiMarkdownShared.vcxproj', '/p:Configuration=Release'])
+    return subprocess.call(['msbuild', 'libMultiMarkdownShared.vcxproj',
+                            '/p:Configuration=Release'])
 
 PLATFORM_BUILDS = {
     'Linux': build_posix,
@@ -37,14 +38,16 @@ def link_modules():
     """Link git submodules in MultiMarkdown for building."""
     subprocess.call(['git', 'submodule', 'init'])
     subprocess.call(['git', 'submodule', 'update'])
-    subprocess.call(['git', 'submodule', 'foreach', 'git branch --set-upstream master origin/master'])
+    subprocess.call(['git', 'submodule', 'foreach',
+                     'git branch --set-upstream master origin/master'])
     subprocess.call(['git', 'submodule', 'foreach', 'git checkout master'])
     subprocess.call(['git', 'submodule', 'foreach', 'git pull origin'])
 
 def build_mmd(target_folder):
     """Build and install the MultiMarkdown shared library."""
     mmd_dir = tempfile.mkdtemp()
-    subprocess.call(['git', 'clone', 'https://github.com/jasedit/MultiMarkdown-5', '-b', 'fix_windows', mmd_dir])
+    subprocess.call(['git', 'clone', 'https://github.com/jasedit/MultiMarkdown-5',
+                     '-b', 'fix_windows', mmd_dir])
     build_dir = os.path.join(mmd_dir, 'build')
     old_pwd = os.getcwd()
     os.chdir(mmd_dir)
