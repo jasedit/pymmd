@@ -31,9 +31,9 @@ class TestLoading(unittest.TestCase):
         """)
 
         self.assertTrue(pymmd.has_metadata(base_txt, pymmd.COMPLETE))
-        self.assertEqual(pymmd.extract_metadata_keys(base_txt), ['title', 'author'])
-        self.assertEqual(pymmd.extract_metadata_value(base_txt, 'title'), 'Test')
-        self.assertEqual(pymmd.extract_metadata_value(base_txt, 'author'), 'Me')
+        self.assertEqual(pymmd.keys(base_txt), ['title', 'author'])
+        self.assertEqual(pymmd.value(base_txt, 'title'), 'Test')
+        self.assertEqual(pymmd.value(base_txt, 'author'), 'Me')
 
 if __name__ == '__main__':
     unittest.main()
