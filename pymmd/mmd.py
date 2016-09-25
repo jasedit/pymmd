@@ -87,13 +87,13 @@ def _expand_source(source, dname, fmt):
     _MMD_LIB.prepend_mmd_header(gstr)
     _MMD_LIB.append_mmd_footer(gstr)
 
-    manifest = _MMD_LIB.g_string_new(b"")
+    manif = _MMD_LIB.g_string_new(b"")
     _MMD_LIB.transclude_source.argtypes = [ctypes.POINTER(GString), ctypes.c_char_p,
                                            ctypes.c_char_p, ctypes.c_int, ctypes.POINTER(GString)]
-    _MMD_LIB.transclude_source(gstr, dname.encode('utf-8'), None, fmt, manifest)
-    manifest_txt = manifest.contents.str
+    _MMD_LIB.transclude_source(gstr, dname.encode('utf-8'), None, fmt, manif)
+    manifest_txt = manif.contents.str
     full_txt = gstr.contents.str
-    _MMD_LIB.g_string_free(manifest, True)
+    _MMD_LIB.g_string_free(manif, True)
     _MMD_LIB.g_string_free(gstr, True)
 
     manifest_txt = [ii for ii in manifest_txt.decode('utf-8').split('\n') if ii]
