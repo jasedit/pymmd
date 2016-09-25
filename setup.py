@@ -26,9 +26,7 @@ class BinaryDistribution(Distribution):
     def is_pure(self):
         return False
 
-if "bdist_wheel" in sys.argv:
-    if not glob.glob(path.join('pymmd', 'files', 'libMultiMarkdown*')):
-        build_mmd(path.join(here, 'pymmd', 'files'))
+if "download_mmd" in sys.argv:
     sys.argv.append('--plat-name')
     sys.argv.append(get_platform())
 
