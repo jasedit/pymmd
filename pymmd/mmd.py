@@ -85,11 +85,13 @@ def _expand_source(source, dname, fmt):
     _MMD_LIB.transclude_source.argtypes = [ctypes.POINTER(GString), ctypes.c_char_p,
                                            ctypes.c_char_p, ctypes.c_int, ctypes.POINTER(GString)]
     _MMD_LIB.transclude_source(gstr, dname.encode('utf-8'), None, fmt, manifest)
-    _MMD_LIB.g_string_free(manifest, True)
+    manifest_txt = manifest.contents.str
     full_txt = gstr.contents.str
+    _MMD_LIB.g_string_free(manifest, True)
     _MMD_LIB.g_string_free(gstr, True)
 
-    return full_txt.decode('utf-8')
+    manifest_txt = [ii for ii in manifest_txt.decode('utf-8').split('\n') if ii]
+    return full_txt.decode('utf-8'), manifest_txt
 
 def has_metadata(source, ext):
     """Returns a flag indicating if a given block of MultiMarkdown text contains metadata."""
@@ -108,8 +110,8 @@ def convert(source, ext=COMPLETE, fmt=HTML, dname=None):
     fmt -- flag indicating output format to use
     dname -- directory to use for transclusion - if None, transclusion functionality is bypassed
     """
-    if dname and os.path.exists(dname) and not (ext & COMPATIBILITY):
-        source = _expand_source(source, dname, fmt)
+    if dname and os.path.exists(dname) and not ext & COMPATIBILITY:
+        source, _ = _expand_source(source, dname, fmt)
     _MMD_LIB.markdown_to_string.argtypes = [ctypes.c_char_p, ctypes.c_ulong, ctypes.c_int]
     _MMD_LIB.markdown_to_string.restype = ctypes.c_char_p
     src = source.encode('utf-8')
