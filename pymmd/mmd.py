@@ -7,16 +7,26 @@ import ctypes
 import ctypes.util
 
 from .download import SHLIB_EXT
-try:
-    _LIB_FILE = 'libMultiMarkdown' + SHLIB_EXT[platform.system()]
-    _LIB_LOCATION = os.path.abspath(os.path.join(os.path.dirname(__file__), 'files', _LIB_FILE))
 
-    if not os.path.exists(_LIB_LOCATION):
-        _LIB_LOCATION = ctypes.util.find_library('MultiMarkdown')
+_MMD_LIB = None
+_LIB_LOCATION = None
 
-    _MMD_LIB = ctypes.cdll.LoadLibrary(_LIB_LOCATION)
-except TypeError:
-    _MMD_LIB = None
+def load_mmd():
+    """Loads libMultiMarkdown for usage"""
+    global _MMD_LIB
+    global _LIB_LOCATION
+    try:
+        lib_file = 'libMultiMarkdown' + SHLIB_EXT[platform.system()]
+        _LIB_LOCATION = os.path.abspath(os.path.join(os.path.dirname(__file__), 'files', lib_file))
+
+        if not os.path.exists(_LIB_LOCATION):
+            _LIB_LOCATION = ctypes.util.find_library('MultiMarkdown')
+
+        _MMD_LIB = ctypes.cdll.LoadLibrary(_LIB_LOCATION)
+    except:
+        _MMD_LIB = None
+
+load_mmd()
 
 # Extension options
 COMPATIBILITY = 0
