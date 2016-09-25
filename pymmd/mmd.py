@@ -19,7 +19,7 @@ def load_mmd():
         lib_file = 'libMultiMarkdown' + SHLIB_EXT[platform.system()]
         _LIB_LOCATION = os.path.abspath(os.path.join(os.path.dirname(__file__), 'files', lib_file))
 
-        if not os.path.exists(_LIB_LOCATION):
+        if not os.path.isfile(_LIB_LOCATION):
             _LIB_LOCATION = ctypes.util.find_library('MultiMarkdown')
 
         _MMD_LIB = ctypes.cdll.LoadLibrary(_LIB_LOCATION)
@@ -120,7 +120,7 @@ def convert(source, ext=COMPLETE, fmt=HTML, dname=None):
     fmt -- flag indicating output format to use
     dname -- directory to use for transclusion - if None, transclusion functionality is bypassed
     """
-    if dname and os.path.exists(dname) and not ext & COMPATIBILITY:
+    if dname and os.path.isdir(dname) and not ext & COMPATIBILITY:
         source, _ = _expand_source(source, dname, fmt)
     _MMD_LIB.markdown_to_string.argtypes = [ctypes.c_char_p, ctypes.c_ulong, ctypes.c_int]
     _MMD_LIB.markdown_to_string.restype = ctypes.c_char_p
