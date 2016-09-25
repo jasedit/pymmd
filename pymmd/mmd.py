@@ -140,7 +140,8 @@ def keys(source, ext=COMPLETE):
     _MMD_LIB.extract_metadata_keys.restype = ctypes.c_char_p
     _MMD_LIB.extract_metadata_keys.argtypes = [ctypes.c_char_p, ctypes.c_ulong]
     src = source.encode('utf-8')
-    all_keys = _MMD_LIB.extract_metadata_keys(src, ext).decode('utf-8')
+    all_keys = _MMD_LIB.extract_metadata_keys(src, ext)
+    all_keys = all_keys.decode('utf-8') if all_keys else ''
     key_list = [ii for ii in all_keys.split('\n') if ii]
     return key_list
 
@@ -158,7 +159,8 @@ def value(source, key, ext=COMPLETE):
     src = source.encode('utf-8')
     dkey = key.encode('utf-8')
 
-    return _MMD_LIB.extract_metadata_value(src, ext, dkey).decode('utf-8')
+    value = _MMD_LIB.extract_metadata_value(src, ext, dkey)
+    return value.decode('utf-8') if value else ''
 
 def version():
     """Returns a string containing the MultiMarkdown library version in use."""
