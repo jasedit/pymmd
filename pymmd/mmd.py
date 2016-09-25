@@ -114,9 +114,11 @@ def convert(source, ext=COMPLETE, fmt=HTML, dname=None):
     source -- string containing MultiMarkdown text
     ext -- extension bitfield to pass to conversion process
     fmt -- flag indicating output format to use
-    dname -- directory to use for transclusion - if None, transclusion functionality is bypassed
+    dname -- Path to use for transclusion - if None, transclusion functionality is bypassed
     """
-    if dname and os.path.isdir(dname) and not ext & COMPATIBILITY:
+    if dname and not ext & COMPATIBILITY:
+        if os.path.isfile(dname):
+            dname = os.path.abspath(os.path.dirname(dname))
         source, _ = _expand_source(source, dname, fmt)
     _MMD_LIB.markdown_to_string.argtypes = [ctypes.c_char_p, ctypes.c_ulong, ctypes.c_int]
     _MMD_LIB.markdown_to_string.restype = ctypes.c_char_p
