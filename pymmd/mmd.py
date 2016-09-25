@@ -70,10 +70,6 @@ class GString(ctypes.Structure):
                 ("currentStringBufferSize", ctypes.c_ulong),
                 ("currentStringLength", ctypes.c_ulong)]
 
-def valid_mmd():
-    """Return flag indicating if the library was correctly loaded."""
-    return bool(_MMD_LIB)
-
 def _expand_source(source, dname, fmt):
     """Expands source text to include headers, footers, and expands Multimarkdown transclusion
     directives.
@@ -205,3 +201,7 @@ def version():
     """Returns a string containing the MultiMarkdown library version in use."""
     _MMD_LIB.mmd_version.restype = ctypes.c_char_p
     return _MMD_LIB.mmd_version().decode('utf-8')
+
+def valid_mmd():
+    """Return flag indicating if the library was correctly loaded."""
+    return bool(_MMD_LIB)
