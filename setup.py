@@ -26,7 +26,7 @@ class BinaryDistribution(Distribution):
     def is_pure(self):
         return False
 
-if "download_mmd" in sys.argv:
+if "download_mmd" in sys.argv and "bdist_wheel" in sys.argv:
     sys.argv.append('--plat-name')
     sys.argv.append(get_platform())
 
