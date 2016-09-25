@@ -70,7 +70,4 @@ def build_mmd(target_folder):
     dest = os.path.join(target_folder, lib_file)
     shutil.copyfile(src, dest)
     os.chdir(old_pwd)
-    try:
-        shutil.rmtree(mmd_dir)
-    except:
-        pass
+    shutil.rmtree(mmd_dir, ignore_errors=True)
