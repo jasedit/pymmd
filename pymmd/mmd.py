@@ -118,7 +118,7 @@ def convert(source, ext=COMPLETE, fmt=HTML, dname=None):
     src = source.encode('utf-8')
     return _MMD_LIB.markdown_to_string(src, ext, fmt).decode('utf-8')
 
-def convert_from(fname, ext=COMPLETE, fmt=HTML):
+def convert_from(fname, ext=COMPLETE, fmt=HTML, oname=None):
     """Converts a file containing MultiMarkdown text to the requested format.
     Transclusion is performed if the COMPATIBILITY extension is not set.
 
@@ -126,11 +126,18 @@ def convert_from(fname, ext=COMPLETE, fmt=HTML):
     fname -- string containing MultiMarkdown text
     ext -- extension bitfield to pass to conversion process
     fmt -- flag indicating output format to use
+    oname -- optional filename to write MMD output to disk
     """
     source = open(fname, 'r').read()
     dname = os.path.dirname(fname)
 
-    return convert(source, ext, fmt, dname)
+    mmd = convert(source, ext, fmt, dname)
+
+    if oname:
+        with open(oname, 'w') as ofp:
+            ofp.write(mmd)
+    return mmd
+
 
 def extract_metadata_keys(source, ext=COMPLETE):
     """Extracts metadata keys from the provided MultiMarkdown text.
