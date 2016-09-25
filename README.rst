@@ -32,6 +32,7 @@ This package can be installed via pypi:
 For Linux users, the shared library can be installed by executing:
 
 .. code:: bash
+
   sudo python -c "import pymmd; pymmd.build_mmd('/usr/local/lib')"; sudo ldconfig
 
 Which will install the required library and update the library cache to make it ready for operation.
