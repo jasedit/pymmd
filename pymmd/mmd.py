@@ -130,6 +130,7 @@ def convert_from(fname, ext=COMPLETE, fmt=HTML, oname=None):
     """
     source = open(fname, 'r').read()
     dname = os.path.dirname(fname)
+    dname = dname if dname else '.'
 
     mmd = convert(source, ext, fmt, dname)
 
