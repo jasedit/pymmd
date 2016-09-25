@@ -3,4 +3,4 @@ sudo: required
 install:
     - python setup.py download_mmd install
 script:
-    - echo "Placeholder"
+    - python test/test.py
