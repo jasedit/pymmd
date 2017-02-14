@@ -7,6 +7,7 @@ import ctypes
 import ctypes.util
 
 from .download import SHLIB_EXT
+from .defaults import DEFAULT_LIBRARY_DIR
 
 _MMD_LIB = None
 _LIB_LOCATION = None
@@ -17,7 +18,7 @@ def load_mmd():
     global _LIB_LOCATION
     try:
         lib_file = 'libMultiMarkdown' + SHLIB_EXT[platform.system()]
-        _LIB_LOCATION = os.path.abspath(os.path.join(os.path.dirname(__file__), 'files', lib_file))
+        _LIB_LOCATION = os.path.abspath(os.path.join(DEFAULT_LIBRARY_DIR, lib_file))
 
         if not os.path.isfile(_LIB_LOCATION):
             _LIB_LOCATION = ctypes.util.find_library('MultiMarkdown')
