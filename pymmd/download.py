@@ -7,6 +7,8 @@ import tempfile
 import shutil
 import os
 
+from .defaults import DEFAULT_LIBRARY_DIR
+
 SHLIB_PREFIX = {
     'Linux': '.',
     'Darwin': '.',
@@ -43,7 +45,7 @@ def link_modules():
     subprocess.call(['git', 'submodule', 'foreach', 'git checkout master'])
     subprocess.call(['git', 'submodule', 'foreach', 'git pull origin'])
 
-def build_mmd(target_folder):
+def build_mmd(target_folder=DEFAULT_LIBRARY_DIR):
     """Build and install the MultiMarkdown shared library."""
     mmd_dir = tempfile.mkdtemp()
     subprocess.call(['git', 'clone', 'https://github.com/jasedit/MultiMarkdown-5',
