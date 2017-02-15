@@ -33,9 +33,9 @@ For Linux users, the shared library can be installed by executing:
 
 .. code:: bash
 
-  sudo python -c "import pymmd; pymmd.build_mmd('/usr/local/lib')"; sudo ldconfig
+  python -c "import pymmd; pymmd.build_mmd()"
 
-Which will install the required library and update the library cache to make it ready for operation.
+Which will download, build, and install the required library within the package's directory. This may need to be run with `sudo` if the package is installed to a system-level site-packages directory.
 
 Verifying the package is working as intended can be accomplished via a simple test command, which should print out the MultiMarkdown version in use:
 
