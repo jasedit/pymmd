@@ -59,7 +59,16 @@ Converting a string of MultiMarkdown directly to various outputs:
   #Generate a snippet
   html_snippet = pymmd.convert(data, ext=pymmd.SNIPPET)
 
-Files can also be converted directly, which enables the `Transclusion <http://fletcher.github.io/MultiMarkdown-5/transclusion>`_ capabilities of MultiMarkdown.
+Conversion can be performed with the `Transclusion <http://fletcher.github.io/MultiMarkdown-5/transclusion>`_ capabilities of MultiMarkdown, either by specifying the directory name:
+
+.. code:: python
+  import pymmd
+
+  with open('./document.mmd') as fp:
+    src = fp.read()
+  output = pymmd.convert(src, dname='.')
+
+Files can also be converted directly from file:
 
 .. code:: python
 
