@@ -1,6 +1,11 @@
 language: python
 sudo: required
+addons:
+    apt:
+        packages:
+            - libgit2-dev
 install:
+    - pip install pygit2
     - python setup.py download_mmd install
 script:
     - python test/test.py
