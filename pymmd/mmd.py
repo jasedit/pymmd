@@ -56,13 +56,13 @@ TRANSCLUDE = 1 << 20
 HTML = 1
 EPUB = 2
 LATEX = 3
-class GString(ctypes.Structure):
-    """Class mirroring GString buffer interface struct in MultiMarkdown."""
 BEAMER = 4
 MEMOIR = 5
 ODF = 6
 MMD = 7
 
+class DString(ctypes.Structure):
+    """Class mirroring DString buffer interface struct in MultiMarkdown."""
     _fields_ = [("str", ctypes.c_char_p),
                 ("currentStringBufferSize", ctypes.c_ulong),
                 ("currentStringLength", ctypes.c_ulong)]
@@ -76,22 +76,19 @@ def _expand_source(source, dname, fmt):
     dname -- directory name to use as the base directory for transclusion references
     fmt -- format flag indicating which format to use to convert transclusion statements
     """
-    _MMD_LIB.g_string_new.restype = ctypes.POINTER(GString)
-    _MMD_LIB.g_string_new.argtypes = [ctypes.c_char_p]
+    _MMD_LIB.d_string_new.restype = ctypes.POINTER(DString)
+    _MMD_LIB.d_string_new.argtypes = [ctypes.c_char_p]
     src = source.encode('utf-8')
-    gstr = _MMD_LIB.g_string_new(src)
+    gstr = _MMD_LIB.d_string_new(src)
 
-    _MMD_LIB.prepend_mmd_header(gstr)
-    _MMD_LIB.append_mmd_footer(gstr)
-
-    manif = _MMD_LIB.g_string_new(b"")
-    _MMD_LIB.transclude_source.argtypes = [ctypes.POINTER(GString), ctypes.c_char_p,
-                                           ctypes.c_char_p, ctypes.c_int, ctypes.POINTER(GString)]
+    manif = _MMD_LIB.d_string_new(b"")
+    _MMD_LIB.transclude_source.argtypes = [ctypes.POINTER(DString), ctypes.c_char_p,
+                                           ctypes.c_char_p, ctypes.c_int, ctypes.POINTER(DString)]
     _MMD_LIB.transclude_source(gstr, dname.encode('utf-8'), None, fmt, manif)
     manifest_txt = manif.contents.str
     full_txt = gstr.contents.str
-    _MMD_LIB.g_string_free(manif, True)
-    _MMD_LIB.g_string_free(gstr, True)
+    _MMD_LIB.d_string_free(manif, True)
+    _MMD_LIB.d_string_free(gstr, True)
 
     manifest_txt = [ii for ii in manifest_txt.decode('utf-8').split('\n') if ii]
     return full_txt.decode('utf-8'), manifest_txt
