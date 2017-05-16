@@ -144,21 +144,6 @@ def manifest(txt, dname):
     _, files = _expand_source(txt, dname, HTML)
     return files
 
-def keys(source, ext=COMPLETE):
-    """Extracts metadata keys from the provided MultiMarkdown text.
-
-    Keyword arguments:
-    source -- string containing MultiMarkdown text
-    ext -- extension bitfield for extracting MultiMarkdown
-    """
-    _MMD_LIB.extract_metadata_keys.restype = ctypes.c_char_p
-    _MMD_LIB.extract_metadata_keys.argtypes = [ctypes.c_char_p, ctypes.c_ulong]
-    src = source.encode('utf-8')
-    all_keys = _MMD_LIB.extract_metadata_keys(src, ext)
-    all_keys = all_keys.decode('utf-8') if all_keys else ''
-    key_list = [ii for ii in all_keys.split('\n') if ii]
-    return key_list
-
 def value(source, key, ext=COMPLETE):
     """Extracts value for the specified metadata key from the given extension set.
 
