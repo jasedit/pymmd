@@ -95,9 +95,9 @@ def _expand_source(source, dname, fmt):
 
 def has_metadata(source, ext):
     """Returns a flag indicating if a given block of MultiMarkdown text contains metadata."""
-    _MMD_LIB.has_metadata.argtypes = [ctypes.c_char_p, ctypes.c_int]
-    _MMD_LIB.has_metadata.restype = ctypes.c_bool
-    return _MMD_LIB.has_metadata(source.encode('utf-8'), ext)
+    _MMD_LIB.mmd_has_metadata.argtypes = [ctypes.c_char_p, ctypes.c_int]
+    _MMD_LIB.mmd_has_metadata.restype = ctypes.c_bool
+    return _MMD_LIB.mmd_has_metadata(source.encode('utf-8'), ext)
 
 def convert(source, ext=COMPLETE, fmt=HTML, dname=None):
     """Converts a string of MultiMarkdown text to the requested format.
@@ -114,10 +114,10 @@ def convert(source, ext=COMPLETE, fmt=HTML, dname=None):
         if os.path.isfile(dname):
             dname = os.path.abspath(os.path.dirname(dname))
         source, _ = _expand_source(source, dname, fmt)
-    _MMD_LIB.markdown_to_string.argtypes = [ctypes.c_char_p, ctypes.c_ulong, ctypes.c_int]
-    _MMD_LIB.markdown_to_string.restype = ctypes.c_char_p
+    _MMD_LIB.mmd_convert_string.argtypes = [ctypes.c_char_p, ctypes.c_ulong, ctypes.c_int]
+    _MMD_LIB.mmd_convert_string.restype = ctypes.c_char_p
     src = source.encode('utf-8')
-    return _MMD_LIB.markdown_to_string(src, ext, fmt).decode('utf-8')
+    return _MMD_LIB.mmd_convert_string(src, ext, fmt).decode('utf-8')
 
 def convert_from(fname, ext=COMPLETE, fmt=HTML):
     """
