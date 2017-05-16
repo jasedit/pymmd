@@ -38,35 +38,31 @@ SMART = 1 << 4
 NOTES = 1 << 5
 NO_LABELS = 1 << 6
 FILTER_STYLES = 1 << 7
-PROCESS_HTML = 1 << 8
-NO_METADATA = 1 << 9
-OBFUSCATE = 1 << 10
-CRITIC = 1 << 11
-CRITIC_ACCEPT = 1 << 12
-CRITIC_REJECT = 1 << 13
-RANDOM_FOOT = 1 << 14
-HEADINGSECTION = 1 << 15
-ESCAPED_LINE_BREAKS = 1 << 16
-NO_STRONG = 1 << 17
-NO_EMPH = 1 << 18
+FILTER_HTML = 1 << 8
+PROCESS_HTML = 1 << 9
+NO_METADATA = 1 << 10
+OBFUSCATE = 1 << 11
+CRITIC = 1 << 12
+CRITIC_ACCEPT = 1 << 13
+CRITIC_REJECT = 1 << 14
+RANDOM_FOOT = 1 << 15
+HEADINGSECTION = 1 << 16
+ESCAPED_LINE_BREAKS = 1 << 17
+NO_STRONG = 1 << 18
+NO_EMPH = 1 << 19
+TRANSCLUDE = 1 << 20
 
 # Options for conversion formats for MMD
 HTML = 1
-TEXT = 2
+EPUB = 2
 LATEX = 3
-MEMOIR = 4
-BEAMER = 5
-OPML = 6
-ODF = 7
-RTF = 8
-CRITIC_ACCEPT = 9
-CRITIC_REJECT = 10
-CRITIC_HTML_HIGHLIGHT = 11
-LYX = 12
-TOC = 13
-
 class GString(ctypes.Structure):
     """Class mirroring GString buffer interface struct in MultiMarkdown."""
+BEAMER = 4
+MEMOIR = 5
+ODF = 6
+MMD = 7
+
     _fields_ = [("str", ctypes.c_char_p),
                 ("currentStringBufferSize", ctypes.c_ulong),
                 ("currentStringLength", ctypes.c_ulong)]
