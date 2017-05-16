@@ -1,12 +1,7 @@
 dist: trusty
 language: python
-sudo: required
-addons:
-    apt:
-        packages:
-            - libgit2-dev
 install:
-    - pip install pygit2
+    - ./.travis/pygit2.sh
     - python setup.py download_mmd install
 script:
     - python test/test.py
