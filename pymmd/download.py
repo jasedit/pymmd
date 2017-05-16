@@ -7,6 +7,8 @@ import tempfile
 import shutil
 import os
 
+import pygit2
+
 from .defaults import DEFAULT_LIBRARY_DIR
 
 SHLIB_PREFIX = {
@@ -36,24 +38,15 @@ PLATFORM_BUILDS = {
     'Windows': build_ms
 }
 
-def link_modules():
-    """Link git submodules in MultiMarkdown for building."""
-    subprocess.call(['git', 'submodule', 'init'])
-    subprocess.call(['git', 'submodule', 'update'])
-    subprocess.call(['git', 'submodule', 'foreach',
-                     'git branch --set-upstream master origin/master'])
-    subprocess.call(['git', 'submodule', 'foreach', 'git checkout master'])
-    subprocess.call(['git', 'submodule', 'foreach', 'git pull origin'])
-
 def build_mmd(target_folder=DEFAULT_LIBRARY_DIR):
     """Build and install the MultiMarkdown shared library."""
     mmd_dir = tempfile.mkdtemp()
-    subprocess.call(['git', 'clone', 'https://github.com/jasedit/MultiMarkdown-5',
-                     '-b', 'fix_windows', mmd_dir])
+    mmd_repo = pygit2.clone_repository('https://github.com/jasedit/MultiMarkdown-5', mmd_dir,
+                                       checkout_branch='fix_windows')
+    mmd_repo.init_submodules()
+    mmd_repo.update_submodules()
     build_dir = os.path.join(mmd_dir, 'build')
     old_pwd = os.getcwd()
-    os.chdir(mmd_dir)
-    link_modules()
     os.chdir(build_dir)
 
     cmake_cmd = ['cmake', '-DCMAKE_BUILD_TYPE=Release', '-DSHAREDBUILD=1', '..']
