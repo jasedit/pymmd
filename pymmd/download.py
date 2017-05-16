@@ -41,8 +41,7 @@ PLATFORM_BUILDS = {
 def build_mmd(target_folder=DEFAULT_LIBRARY_DIR):
     """Build and install the MultiMarkdown shared library."""
     mmd_dir = tempfile.mkdtemp()
-    mmd_repo = pygit2.clone_repository('https://github.com/jasedit/MultiMarkdown-5', mmd_dir,
-                                       checkout_branch='fix_windows')
+    mmd_repo = pygit2.clone_repository('https://github.com/fletcher/MultiMarkdown-6', mmd_dir)
     mmd_repo.init_submodules()
     mmd_repo.update_submodules()
     build_dir = os.path.join(mmd_dir, 'build')
