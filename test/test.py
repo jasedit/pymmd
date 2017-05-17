@@ -27,9 +27,9 @@ class TestPyMMD(unittest.TestCase):
         self.assertTrue(version)
         major, minor, patch = [int(ii) for ii in version.split('.', 3)]
         self.assertGreaterEqual(major, 5)
-        if major >= 5:
+        if major == 5:
             self.assertGreaterEqual(minor, 4)
-            if minor >= 4:
+            if minor == 4:
                 self.assertGreaterEqual(patch, 0)
 
     def test_metadata(self):
