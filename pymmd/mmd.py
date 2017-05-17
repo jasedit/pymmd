@@ -52,6 +52,14 @@ NO_STRONG = 1 << 18
 NO_EMPH = 1 << 19
 TRANSCLUDE = 1 << 20
 
+# Language options for MMD
+ENGLISH = 0
+DUTCH = 1
+FRENCH = 2
+GERMAN = 3
+GERMANGUILL = 4
+SWEDISH = 5
+
 # Options for conversion formats for MMD
 HTML = 1
 EPUB = 2
