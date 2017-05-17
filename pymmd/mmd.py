@@ -101,11 +101,12 @@ def _expand_source(source, dname, fmt):
     manifest_txt = [ii for ii in manifest_txt.decode('utf-8').split('\n') if ii]
     return full_txt.decode('utf-8'), manifest_txt
 
-def has_metadata(source, ext):
+def has_metadata(source):
     """Returns a flag indicating if a given block of MultiMarkdown text contains metadata."""
-    _MMD_LIB.mmd_has_metadata.argtypes = [ctypes.c_char_p, ctypes.c_int]
+    _MMD_LIB.mmd_has_metadata.argtypes = [ctypes.c_char_p, ctypes.POINTER(ctypes.c_size_t)]
     _MMD_LIB.mmd_has_metadata.restype = ctypes.c_bool
-    return _MMD_LIB.mmd_has_metadata(source.encode('utf-8'), ext)
+    end = ctypes.c_size_t(0)
+    return _MMD_LIB.mmd_string_has_metadata(source.encode('utf-8'), ctypes.byref(end))
 
 def convert(source, ext=COMPLETE, fmt=HTML, dname=None):
     """Converts a string of MultiMarkdown text to the requested format.
