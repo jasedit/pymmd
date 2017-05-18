@@ -47,15 +47,15 @@ class TestPyMMD(unittest.TestCase):
         # self.assertEqual(pymmd.value(base_txt, 'title'), 'Test')
         # self.assertEqual(pymmd.value(base_txt, 'author'), 'Me')
 
-    # def text_empty_metadata(self):
-    #     """Test metadata functions when metadata doesn't exist."""
-    #     base_txt = textwrap.dedent("""\
-    #       # Introduction
-    #
-    #       Here is some text.
-    #       """)
-    #
-    #     self.assertFalse(pymmd.has_metadata(base_txt, pymmd.COMPLETE))
+    def text_empty_metadata(self):
+        """Test metadata functions when metadata doesn't exist."""
+        base_txt = textwrap.dedent("""\
+          # Introduction
+
+          Here is some text.
+          """)
+
+        self.assertFalse(pymmd.has_metadata(base_txt, pymmd.COMPLETE))
     #     self.assertEqual(pymmd.value(base_txt, 'title'), '')
     #
     # def test_convert(self):
