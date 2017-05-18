@@ -103,8 +103,8 @@ def _expand_source(source, dname, fmt):
 
 def has_metadata(source):
     """Returns a flag indicating if a given block of MultiMarkdown text contains metadata."""
-    _MMD_LIB.mmd_has_metadata.argtypes = [ctypes.c_char_p, ctypes.POINTER(ctypes.c_size_t)]
-    _MMD_LIB.mmd_has_metadata.restype = ctypes.c_bool
+    _MMD_LIB.mmd_string_has_metadata.argtypes = [ctypes.c_char_p, ctypes.POINTER(ctypes.c_size_t)]
+    _MMD_LIB.mmd_string_has_metadata.restype = ctypes.c_bool
     end = ctypes.c_size_t(0)
     return _MMD_LIB.mmd_string_has_metadata(source.encode('utf-8'), ctypes.byref(end))
 
