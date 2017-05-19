@@ -56,9 +56,9 @@ class TestPyMMD(unittest.TestCase):
           Here is some text.
           """)
 
-    #     self.assertEqual(pymmd.value(base_txt, 'title'), '')
         self.assertFalse(pymmd.has_metadata(base_txt))
         self.assertEqual(pymmd.keys(base_txt), [])
+        self.assertEqual(pymmd.value(base_txt, 'title'), '')
     #
     def test_convert(self):
         """Test conversion function"""
