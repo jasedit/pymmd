@@ -18,6 +18,12 @@ class DString(ctypes.Structure):
                 ("currentStringBufferSize", ctypes.c_ulong),
                 ("currentStringLength", ctypes.c_ulong)]
 
+class Stack(ctypes.Structure):
+    """Class mirroring stack struct in MultiMarkdown"""
+    _fields_ = [("size", ctypes.c_size_t),
+                      ("capacity", ctypes.c_size_t),
+                      ("element", ctypes.POINTER(ctypes.c_void_p))]
+
 def load_mmd():
     """Loads libMultiMarkdown for usage"""
     global _MMD_LIB
@@ -38,6 +44,17 @@ def define_interfaces():
     # d_string_new()
     _MMD_LIB.d_string_new.restype = ctypes.POINTER(DString)
     _MMD_LIB.d_string_new.argtypes = [ctypes.c_char_p]
+
+    # stack_new()
+    _MMD_LIB.stack_new.restype = ctypes.POINTER(Stack)
+    _MMD_LIB.stack_new.argtypes = [ctypes.c_int]
+
+    # stack_free()
+    _MMD_LIB.stack_free.argtypes = [ctypes.POINTER(Stack)]
+
+    # stack_peek_index
+    _MMD_LIB.stack_peek_index.restype = ctypes.c_void_p
+    _MMD_LIB.stack_peek_index.argtypes = [ctypes.POINTER(Stack), ctypes.c_size_t]
 
     # transclude_source()
     _MMD_LIB.transclude_source.argtypes = [ctypes.POINTER(DString),
@@ -121,14 +138,18 @@ def _expand_source(source, dname, fmt):
     src = source.encode('utf-8')
     gstr = _MMD_LIB.d_string_new(src)
 
-    manif = _MMD_LIB.d_string_new(b"")
-    _MMD_LIB.transclude_source(gstr, dname.encode('utf-8'), None, fmt, manif)
-    manifest_txt = manif.contents.str
+    manif = _MMD_LIB.stack_new(0)
+
+    _MMD_LIB.transclude_source(gstr, dname.encode('utf-8'), "".encode('utf-8'), fmt, None, manif)
+    manifest_txt = []
+    for idx in range(manif.contents.size):
+        elem = _MMD_LIB.stack_peek_index(manif, idx)
+        manifest_txt.append(str(ctypes.cast(elem, ctypes.c_char_p)))
     full_txt = gstr.contents.str
-    _MMD_LIB.d_string_free(manif, True)
+
+    _MMD_LIB.stack_free(manif)
     _MMD_LIB.d_string_free(gstr, True)
 
-    manifest_txt = [ii for ii in manifest_txt.decode('utf-8').split('\n') if ii]
     return full_txt.decode('utf-8'), manifest_txt
 
 def has_metadata(source):
