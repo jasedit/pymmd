@@ -108,7 +108,7 @@ def has_metadata(source):
     end = ctypes.c_size_t(0)
     return _MMD_LIB.mmd_string_has_metadata(source.encode('utf-8'), ctypes.byref(end))
 
-def convert(source, ext=COMPLETE, fmt=HTML, dname=None):
+def convert(source, ext=COMPLETE, fmt=HTML, language=ENGLISH, dname=None):
     """Converts a string of MultiMarkdown text to the requested format.
     Transclusion is performed if the COMPATIBILITY extension is not set, and dname is set to a
     valid directory
@@ -123,10 +123,10 @@ def convert(source, ext=COMPLETE, fmt=HTML, dname=None):
         if os.path.isfile(dname):
             dname = os.path.abspath(os.path.dirname(dname))
         source, _ = _expand_source(source, dname, fmt)
-    _MMD_LIB.mmd_convert_string.argtypes = [ctypes.c_char_p, ctypes.c_ulong, ctypes.c_int]
+    _MMD_LIB.mmd_convert_string.argtypes = [ctypes.c_char_p, ctypes.c_ulong, ctypes.c_short, ctypes.c_short]
     _MMD_LIB.mmd_convert_string.restype = ctypes.c_char_p
     src = source.encode('utf-8')
-    return _MMD_LIB.mmd_convert_string(src, ext, fmt).decode('utf-8')
+    return _MMD_LIB.mmd_convert_string(src, ext, fmt, language).decode('utf-8') + '\n'
 
 def convert_from(fname, ext=COMPLETE, fmt=HTML):
     """
