@@ -44,6 +44,7 @@ class TestPyMMD(unittest.TestCase):
         """)
 
         self.assertTrue(pymmd.has_metadata(base_txt))
+        self.assertEqual(pymmd.keys(base_txt), ['title', 'author'])
         # self.assertEqual(pymmd.value(base_txt, 'title'), 'Test')
         # self.assertEqual(pymmd.value(base_txt, 'author'), 'Me')
 
@@ -55,8 +56,9 @@ class TestPyMMD(unittest.TestCase):
           Here is some text.
           """)
 
-        self.assertFalse(pymmd.has_metadata(base_txt, pymmd.COMPLETE))
     #     self.assertEqual(pymmd.value(base_txt, 'title'), '')
+        self.assertFalse(pymmd.has_metadata(base_txt))
+        self.assertEqual(pymmd.keys(base_txt), [])
     #
     # def test_convert(self):
     #     """Test conversion function"""
