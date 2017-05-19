@@ -60,25 +60,25 @@ class TestPyMMD(unittest.TestCase):
         self.assertFalse(pymmd.has_metadata(base_txt))
         self.assertEqual(pymmd.keys(base_txt), [])
     #
-    # def test_convert(self):
-    #     """Test conversion function"""
-    #     with open(os.path.join(self.test_dir, 'test_doc.mmd')) as fp:
-    #         src_doc = fp.read()
-    #
-    #     with open(os.path.join(self.test_dir, 'test_doc.html')) as fp:
-    #         html_doc = fp.read()
-    #     with open(os.path.join(self.test_dir, 'test_doc.tex')) as fp:
-    #         tex_doc = fp.read()
-    #
-    #     self.assertEqual(pymmd.convert(src_doc), html_doc)
-    #     self.assertEqual(pymmd.convert(src_doc, fmt=pymmd.LATEX), tex_doc)
-    #
-    # def test_convert_from(self):
-    #     """Test convert_from function"""
-    #     with open(os.path.join(self.test_dir, 'transclusion.html')) as fp:
-    #         html_res = fp.read()
-    #
-    #     self.assertEqual(pymmd.convert_from(os.path.join(self.test_dir,'transclusion.mmd')), html_res)
+    def test_convert(self):
+        """Test conversion function"""
+        with open(os.path.join(self.test_dir, 'test_doc.mmd')) as fp:
+            src_doc = fp.read()
+
+        with open(os.path.join(self.test_dir, 'test_doc.html')) as fp:
+            html_doc = fp.read()
+        with open(os.path.join(self.test_dir, 'test_doc.tex')) as fp:
+            tex_doc = fp.read()
+
+        self.assertEqual(pymmd.convert(src_doc), html_doc)
+        self.assertEqual(pymmd.convert(src_doc, fmt=pymmd.LATEX), tex_doc)
+
+    def test_convert_from(self):
+        """Test convert_from function"""
+        with open(os.path.join(self.test_dir, 'transclusion.html')) as fp:
+            html_res = fp.read()
+
+        self.assertEqual(pymmd.convert_from(os.path.join(self.test_dir,'transclusion.mmd')), html_res)
 
 if __name__ == '__main__':
     unittest.main()
