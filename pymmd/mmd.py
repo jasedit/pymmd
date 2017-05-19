@@ -61,13 +61,13 @@ GERMANGUILL = 4
 SWEDISH = 5
 
 # Options for conversion formats for MMD
-HTML = 1
-EPUB = 2
-LATEX = 3
-BEAMER = 4
-MEMOIR = 5
-ODF = 6
-MMD = 7
+HTML = 0
+EPUB = 1
+LATEX = 2
+BEAMER = 3
+MEMOIR = 4
+ODF = 5
+MMD = 6
 
 class DString(ctypes.Structure):
     """Class mirroring DString buffer interface struct in MultiMarkdown."""
