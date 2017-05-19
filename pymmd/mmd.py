@@ -155,7 +155,7 @@ def convert(source, ext=COMPLETE, fmt=HTML, language=ENGLISH, dname=None):
     src = source.encode('utf-8')
     return _MMD_LIB.mmd_convert_string(src, ext, fmt, language).decode('utf-8') + '\n'
 
-def convert_from(fname, ext=COMPLETE, fmt=HTML):
+def convert_from(fname, ext=COMPLETE, fmt=HTML, language=ENGLISH):
     """
     Reads in a file and performs MultiMarkdown conversion, with transclusion ocurring based on the
     file directory. Returns the converted string.
@@ -165,12 +165,11 @@ def convert_from(fname, ext=COMPLETE, fmt=HTML):
     ext -- extension bitfield to pass to conversion process
     fmt -- flag indicating output format to use
     """
-
     dname = os.path.abspath(os.path.dirname(fname))
     with open(fname, 'r') as fp:
         src = fp.read()
 
-    return convert(src, ext, fmt, dname)
+    return convert(src, ext, fmt, language, dname)
 
 def manifest(txt, dname):
     """Extracts file manifest for a body of text with the given directory."""
