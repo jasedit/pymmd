@@ -173,13 +173,13 @@ def value(source, key, ext=COMPLETE):
     ext -- extension bitfield for processing text
     key -- key to extract
     """
-    _MMD_LIB.extract_metadata_value.restype = ctypes.c_char_p
-    _MMD_LIB.extract_metadata_value.argtypes = [ctypes.c_char_p, ctypes.c_ulong, ctypes.c_char_p]
+    _MMD_LIB.metavalue_from_string.restype = ctypes.c_char_p
+    _MMD_LIB.metavalue_from_string.argtypes = [ctypes.c_char_p, ctypes.c_char_p]
 
     src = source.encode('utf-8')
     dkey = key.encode('utf-8')
 
-    value = _MMD_LIB.extract_metadata_value(src, ext, dkey)
+    value = _MMD_LIB.metavalue_from_string(src, dkey)
     return value.decode('utf-8') if value else ''
 
 def version():
