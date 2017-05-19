@@ -12,6 +12,12 @@ from .defaults import DEFAULT_LIBRARY_DIR
 _MMD_LIB = None
 _LIB_LOCATION = None
 
+class DString(ctypes.Structure):
+    """Class mirroring DString buffer interface struct in MultiMarkdown."""
+    _fields_ = [("str", ctypes.c_char_p),
+                ("currentStringBufferSize", ctypes.c_ulong),
+                ("currentStringLength", ctypes.c_ulong)]
+
 def load_mmd():
     """Loads libMultiMarkdown for usage"""
     global _MMD_LIB
@@ -27,7 +33,41 @@ def load_mmd():
     except:
         _MMD_LIB = None
 
+def define_interfaces():
+    """Define arguments and return types for all used functions"""
+    # d_string_new()
+    _MMD_LIB.d_string_new.restype = ctypes.POINTER(DString)
+    _MMD_LIB.d_string_new.argtypes = [ctypes.c_char_p]
+
+    # transclude_source()
+    _MMD_LIB.transclude_source.argtypes = [ctypes.POINTER(DString),
+                        ctypes.c_char_p,
+                        ctypes.c_char_p,
+                        ctypes.c_short,
+                        ctypes.POINTER(Stack),
+                        ctypes.POINTER(Stack)]
+
+    # mmd_string_has_metadata()
+    _MMD_LIB.mmd_string_has_metadata.argtypes = [ctypes.c_char_p, ctypes.POINTER(ctypes.c_size_t)]
+    _MMD_LIB.mmd_string_has_metadata.restype = ctypes.c_bool
+
+    # mmd_convert_string()
+    _MMD_LIB.mmd_convert_string.restype = ctypes.c_char_p
+    _MMD_LIB.mmd_convert_string.argtypes = [ctypes.c_char_p, ctypes.c_ulong, ctypes.c_short, ctypes.c_short]
+
+    # mmd_metadata_keys_string()
+    _MMD_LIB.mmd_metadata_keys_string.restype = ctypes.c_char_p
+    _MMD_LIB.mmd_metadata_keys_string.argtypes = [ctypes.c_char_p, ctypes.c_ulong, ctypes.c_short, ctypes.c_short]
+
+    # metavalue_from_string()
+    _MMD_LIB.metavalue_from_string.restype = ctypes.c_char_p
+    _MMD_LIB.metavalue_from_string.argtypes = [ctypes.c_char_p, ctypes.c_char_p]
+
+    # mmd_version()
+    # _MMD_LIB.mmd_version.restype = ctypes.c_char_p
+
 load_mmd()
+define_interfaces()
 
 # Extension options
 COMPATIBILITY = 0
@@ -69,12 +109,6 @@ MEMOIR = 4
 ODF = 5
 MMD = 6
 
-class DString(ctypes.Structure):
-    """Class mirroring DString buffer interface struct in MultiMarkdown."""
-    _fields_ = [("str", ctypes.c_char_p),
-                ("currentStringBufferSize", ctypes.c_ulong),
-                ("currentStringLength", ctypes.c_ulong)]
-
 def _expand_source(source, dname, fmt):
     """Expands source text to include headers, footers, and expands Multimarkdown transclusion
     directives.
@@ -84,14 +118,10 @@ def _expand_source(source, dname, fmt):
     dname -- directory name to use as the base directory for transclusion references
     fmt -- format flag indicating which format to use to convert transclusion statements
     """
-    _MMD_LIB.d_string_new.restype = ctypes.POINTER(DString)
-    _MMD_LIB.d_string_new.argtypes = [ctypes.c_char_p]
     src = source.encode('utf-8')
     gstr = _MMD_LIB.d_string_new(src)
 
     manif = _MMD_LIB.d_string_new(b"")
-    _MMD_LIB.transclude_source.argtypes = [ctypes.POINTER(DString), ctypes.c_char_p,
-                                           ctypes.c_char_p, ctypes.c_int, ctypes.POINTER(DString)]
     _MMD_LIB.transclude_source(gstr, dname.encode('utf-8'), None, fmt, manif)
     manifest_txt = manif.contents.str
     full_txt = gstr.contents.str
@@ -103,8 +133,6 @@ def _expand_source(source, dname, fmt):
 
 def has_metadata(source):
     """Returns a flag indicating if a given block of MultiMarkdown text contains metadata."""
-    _MMD_LIB.mmd_string_has_metadata.argtypes = [ctypes.c_char_p, ctypes.POINTER(ctypes.c_size_t)]
-    _MMD_LIB.mmd_string_has_metadata.restype = ctypes.c_bool
     end = ctypes.c_size_t(0)
     return _MMD_LIB.mmd_string_has_metadata(source.encode('utf-8'), ctypes.byref(end))
 
@@ -123,8 +151,7 @@ def convert(source, ext=COMPLETE, fmt=HTML, language=ENGLISH, dname=None):
         if os.path.isfile(dname):
             dname = os.path.abspath(os.path.dirname(dname))
         source, _ = _expand_source(source, dname, fmt)
-    _MMD_LIB.mmd_convert_string.argtypes = [ctypes.c_char_p, ctypes.c_ulong, ctypes.c_short, ctypes.c_short]
-    _MMD_LIB.mmd_convert_string.restype = ctypes.c_char_p
+
     src = source.encode('utf-8')
     return _MMD_LIB.mmd_convert_string(src, ext, fmt, language).decode('utf-8') + '\n'
 
@@ -157,8 +184,6 @@ def keys(source, ext=COMPLETE, fmt=MMD, language=ENGLISH):
     source -- string containing MultiMarkdown text
     ext -- extension bitfield for extracting MultiMarkdown
     """
-    _MMD_LIB.mmd_metadata_keys_string.restype = ctypes.c_char_p
-    _MMD_LIB.mmd_metadata_keys_string.argtypes = [ctypes.c_char_p, ctypes.c_ulong, ctypes.c_short, ctypes.c_short]
     src = source.encode('utf-8')
     all_keys = _MMD_LIB.mmd_metadata_keys_string(src, ext, fmt, language)
     all_keys = all_keys.decode('utf-8') if all_keys else ''
@@ -173,9 +198,6 @@ def value(source, key, ext=COMPLETE):
     ext -- extension bitfield for processing text
     key -- key to extract
     """
-    _MMD_LIB.metavalue_from_string.restype = ctypes.c_char_p
-    _MMD_LIB.metavalue_from_string.argtypes = [ctypes.c_char_p, ctypes.c_char_p]
-
     src = source.encode('utf-8')
     dkey = key.encode('utf-8')
 
@@ -184,7 +206,6 @@ def value(source, key, ext=COMPLETE):
 
 def version():
     """Returns a string containing the MultiMarkdown library version in use."""
-    _MMD_LIB.mmd_version.restype = ctypes.c_char_p
     return _MMD_LIB.mmd_version().decode('utf-8')
 
 def valid_mmd():
